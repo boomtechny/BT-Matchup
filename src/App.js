@@ -1,33 +1,34 @@
 import React, {Component} from 'react'; 
-import { View, Text, Image } from 'react-native'; 
-import LinearGradient from 'react-native-linear-gradient';
-import { Icon } from './components/common/Icon';
+import { Provider } from 'react-redux'; 
+import { createStore, applyMiddleware } from 'redux'; 
+import firebase from 'firebase';
+import ReduxThunk from 'redux-thunk';
+import reducers from './reducers'; 
+
+import  { FB_APIKEY, FB_AUTHDOMAIN, FB_DATABASEURL, FB_PROJECTID, FB_STORAGEBUCKET, FB_MESSAGINGSENDERID} from './config/constants.js';
+import Router from './Router'; 
 
 class App extends Component{
-  render(){
-    return(
-    <LinearGradient colors ={['#4C0E00', '#1A0600']} style={styles.container }  >
-    <View  >
-    <Image style = {styles.logo} source = {require('./resources/icons/logo.png')}/>
-
-<Text style= {{color:'white', fontSize:24}} >Welcome</Text>
-
-
-    </View>
-</LinearGradient>
-  ); 
-}
-}
-const styles = {
-  container:{
-    
-    flex: 1, 
-    alignItems:'center', 
-    justifyContent: 'center'
-  },
-  logo:{
-    width:75,
-    height:75
+  componentWillMount(){
+    const config = {
+      apiKey: FB_APIKEY,
+      authDomain: FB_AUTHDOMAIN,
+      databaseURL: FB_DATABASEURL,
+      projectId: FB_PROJECTID,
+      storageBucket: FB_STORAGEBUCKET,
+      messagingSenderId: FB_MESSAGINGSENDERID
+    }; 
+  
+    firebase.initializeApp(config); 
+  
+    }
+    render(){
+      const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
+      return (  <Provider store ={store}>
+       <Router />
+          </Provider> 
+      ); 
+    }
   }
-}
-export default App; 
+  
+  export default App; 
